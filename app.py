@@ -7,7 +7,6 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
-
 def init_db():
     conn = sqlite3.connect('accounts.db')
     cursor = conn.cursor()
@@ -65,6 +64,10 @@ def get_login_fail():
         return redirect(url_for('get_login_success'))
     return render_template('login_fail.html')
 
+@app.route('/logout', methods=['GET'])
+def get_logout():
+    session.clear()
+    return redirect(url_for('get_login'))
 
 if __name__ == '__main__':
     init_db()
