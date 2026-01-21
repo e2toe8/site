@@ -42,50 +42,48 @@ def check_account(username, password):
     conn.close()
     return user
 
+@app.route('/')
+def get_index():
+    if 'username' in session:
+        return redirect(url_for('get_login_success'))
+    return render_template('index.html')
+
 @app.route('/register', methods=['GET'])
 def get_register():
-    return render_template('register.html')
+    if 'username' in session:
+        return redirect(url_for('get_index'))
+    return render_template('register.html', username = session['username'])
 
 @app.route('/register', methods=['POST'])
 def post_register():
+    if 'username' in session:
+        return redirect(url_for('get_index'))
     username = request.form.get('username')
     password = request.form.get('password')
     if create_account(username, password):
-        return redirect(url_for('get_register_success'))
+        return redirect(url_for('get_login'))
     else:
         return redirect(url_for('get_register_fail'))
 
 @app.route('/login', methods=['GET'])
 def get_login():
     if 'username' in session:
-        return redirect(url_for('get_login_success'))
+        return redirect(url_for('get_index'))
 
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def post_login():
     if 'username' in session:
-        return redirect(url_for('get_login_success'))
+        return redirect(url_for('get_index'))
 
     username = request.form.get('username')
     password = request.form.get('password')
     if check_account(username, password):
         session['username'] = username
-        return redirect(url_for('get_login_success'))
+        return redirect(url_for('get_index'))
     else:
         return redirect(url_for('get_login_fail'))
-
-@app.route('/login_success')
-def get_login_success():
-    if 'username' not in session:
-        return redirect(url_for('get_login'))
-    return render_template('login_success.html')
-
-@app.route('/login_fail')
-def get_login_fail():
-    if 'username' in session:
-        return redirect(url_for('get_login_success'))
-    return render_template('login_fail.html')
 
 @app.route('/logout', methods=['GET'])
 def get_logout():
