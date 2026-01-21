@@ -20,6 +20,19 @@ def init_db():
     conn.commit()
     conn.close()
 
+def create_account(username, password):
+    conn = sqlite3.connect('accounts.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute('insert into accounts (username, password) values (?, ?)', 
+        (username, password))
+        conn.commit()
+        conn.close()
+        return True
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False
+
 def check_account(username, password):
     conn = sqlite3.connect('accounts.db')
     cursor = conn.cursor()
@@ -29,13 +42,25 @@ def check_account(username, password):
     conn.close()
     return user
 
+@app.route('/register', methods=['GET'])
+def get_register():
+    return render_template('register.html')
+
+@app.route('/register', methods=['POST'])
+def post_register():
+    username = request.form.get('username')
+    password = request.form.get('password')
+    if create_account(username, password):
+        return redirect(url_for('get_register_success'))
+    else:
+        return redirect(url_for('get_register_fail'))
+
 @app.route('/login', methods=['GET'])
 def get_login():
     if 'username' in session:
         return redirect(url_for('get_login_success'))
 
     return render_template('login.html')
-
 
 @app.route('/login', methods=['POST'])
 def post_login():
@@ -50,13 +75,11 @@ def post_login():
     else:
         return redirect(url_for('get_login_fail'))
 
-
 @app.route('/login_success')
 def get_login_success():
     if 'username' not in session:
         return redirect(url_for('get_login'))
     return render_template('login_success.html')
-
 
 @app.route('/login_fail')
 def get_login_fail():
