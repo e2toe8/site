@@ -35,14 +35,14 @@ def post_login():
         return redirect(url_for('get_login_fail'))
 
 
-@app.route('/login-success')
+@app.route('/login_success')
 def get_login_success():
     if 'username' not in session:
         return redirect(url_for('get_login'))
     return render_template('login_success.html')
 
 
-@app.route('/login-fail')
+@app.route('/login_fail')
 def get_login_fail():
     if 'username' in session:
         return redirect(url_for('get_login_success'))
