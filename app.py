@@ -2,7 +2,7 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 
-from db import init_db, create_account, check_account, get_all_posts, create_post
+from db import init_db, create_account, check_account, get_all_posts, create_post, get_post_by_post_id
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
@@ -75,9 +75,20 @@ def post_new_post():
 
     title = request.form.get('title')
     content = request.form.get('content')
-    author = session['username']
+    author = session['author']
     create_post(title, content, author)
     return redirect(url_for('get_posts'))
+
+@app.route('/posts/<post_id>', methods=['GET'])
+def get_posts_post_id(post_id):
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+
+    post = get_post_by_post_id(post_id)
+    if post:
+        return render_template('post.html', post = post)
+    else: 
+        return redirect(url_for('get_posts'))
 
 if __name__ == '__main__':
     init_db()

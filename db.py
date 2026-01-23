@@ -62,3 +62,15 @@ def create_post(title, content, author):
                    (title, content, author))
     conn.commit()
     conn.close()
+
+def get_post_by_post_id(post_id):
+    conn = sqlite3.connect('webserver.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+    SELECT posts.id, posts.title, posts.content, accounts.username
+    FROM posts JOIN accounts
+    WHERE posts.author = ?
+    ''', (post_id))
+    post = cursor.fetchone()
+    conn.close()
+    return post
