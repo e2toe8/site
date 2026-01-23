@@ -2,6 +2,8 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 
+from db import init_db, create_account, check_account, get_all_posts
+
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
@@ -51,6 +53,13 @@ def post_login():
 def get_logout():
     session.clear()
     return redirect(url_for('get_login'))
+
+@app.route('/posts', methods=['GET'])
+def get_posts():
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+    posts = get_all_posts()
+    return render_template('posts.html', posts = posts)
 
 if __name__ == '__main__':
     init_db()
