@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import sqlite3
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 import sqlite3
@@ -44,15 +43,15 @@ def check_account(username, password):
 
 @app.route('/')
 def get_index():
-    if 'username' in session:
-        return redirect(url_for('get_login_success'))
-    return render_template('index.html')
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+    return render_template('index.html', username = session['username'])
 
 @app.route('/register', methods=['GET'])
 def get_register():
     if 'username' in session:
         return redirect(url_for('get_index'))
-    return render_template('register.html', username = session['username'])
+    return render_template('register.html')
 
 @app.route('/register', methods=['POST'])
 def post_register():
@@ -63,13 +62,12 @@ def post_register():
     if create_account(username, password):
         return redirect(url_for('get_login'))
     else:
-        return redirect(url_for('get_register_fail'))
+        return render_template('register_fail.html')
 
 @app.route('/login', methods=['GET'])
 def get_login():
     if 'username' in session:
         return redirect(url_for('get_index'))
-
     return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
@@ -83,7 +81,7 @@ def post_login():
         session['username'] = username
         return redirect(url_for('get_index'))
     else:
-        return redirect(url_for('get_login_fail'))
+        return render_template('login_fail.html')
 
 @app.route('/logout', methods=['GET'])
 def get_logout():
