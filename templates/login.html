@@ -1,25 +1,18 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 
-<head>
-    <title>Simple Flask Website</title>
-</head>
-
-<body>
-    <h2>Login</h2>
-    <form action="/login" method="post">
-        Username:<br>
-        <input type="text" id="username" name="username">
-        <br><br>
-        Password:<br>
-        <input type="password" id="password" name="password">
-        <br><br>
-        <button>Login</button>
-    </form>
-    <br>
-    <form action="/register">
-        <button>Go to Register</button>
-    </form>
-</body>
-
-</html>
+{% block content %}
+<h2>Login</h2>
+<form action="/login" method="post">
+    Username:<br>
+    <input type="text" id="username" name="username">
+    <br><br>
+    Password:<br>
+    <input type="password" id="password" name="password">
+    <br><br>
+    <button>Login</button>
+</form>
+<br>
+<form action="/register">
+    <button>Go to Register</button>
+</form>
+{% endblock %}
