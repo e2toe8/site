@@ -23,7 +23,7 @@ def init_db():
     conn.close()
 
 def create_account(username, password):
-    conn = sqlite3.connect('accounts.db')
+    conn = sqlite3.connect('webserver.db')
     cursor = conn.cursor()
     try:
         cursor.execute('INSERT INTO accounts (username, password) VALUES (?, ?)',
@@ -54,3 +54,11 @@ def get_all_posts():
     posts = cursor.fetchall()
     conn.close()
     return posts
+
+def create_post(title, content, author):
+    conn = sqlite3.connect('webserver.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
+                   (title, content, author))
+    conn.commit()
+    conn.close()

@@ -2,8 +2,7 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 
-from db import init_db, create_account, check_account, get_all_posts
-
+from db import init_db, create_account, check_account, get_all_posts, create_post
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
@@ -43,8 +42,10 @@ def post_login():
 
     username = request.form.get('username')
     password = request.form.get('password')
-    if check_account(username, password):
-        session['username'] = username
+    user = check_account(username, password)
+    if user:
+        session['author'] = user[0]
+        session['username'] = user[1]
         return redirect(url_for('get_index'))
     else:
         return render_template('login_fail.html')
@@ -60,6 +61,23 @@ def get_posts():
         return redirect(url_for('get_login'))
     posts = get_all_posts()
     return render_template('posts.html', posts = posts)
+
+@app.route('/posts/new', methods=['GET'])
+def get_new_post():
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+    return render_template('posts_new.html')
+
+@app.route('/posts/new', methods=['POST'])
+def post_new_post():
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+
+    title = request.form.get('title')
+    content = request.form.get('content')
+    author = session['username']
+    create_post(title, content, author)
+    return redirect(url_for('get_posts'))
 
 if __name__ == '__main__':
     init_db()
