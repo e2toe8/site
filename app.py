@@ -2,7 +2,8 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 import os
 
-from db import init_db, create_account, check_account, get_all_posts, create_post, get_post_by_post_id
+from db import *
+
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
@@ -87,7 +88,7 @@ def get_posts_post_id(post_id):
     post = get_post_by_post_id(post_id)
     if post:
         return render_template('post.html', post = post)
-    else: 
+    else:
         return redirect(url_for('get_posts'))
 
 if __name__ == '__main__':
