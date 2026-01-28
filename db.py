@@ -87,3 +87,11 @@ def get_post_by_post_id(post_id):
     post = cursor.fetchone()
     conn.close()
     return post
+
+def update_post(post_id, new_title, new_content):
+    conn = sqlite3.connect('webserver.db')
+    cursor = conn.cursor()
+    cursor.execute('''UPDATE posts SET title = ?, content = ? WHERE id = ?''', 
+    (new_title, new_content, post_id))
+    conn.commit()
+    conn.close()
