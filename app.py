@@ -120,6 +120,35 @@ def post_posts_post_id_edit(post_id):
     update_post(post_id, title, content)
     return redirect(url_for('get_posts_post_id', post_id=post_id))
 
+@app.route('/posts/<post_id>/delete', methods=['GET'])
+def get_posts_post_id_delete(post_id):
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+
+    post = get_post_by_post_id(post_id)
+    if not post:
+        return redirect(url_for('get_posts'))
+
+    if post[3] != session['username']:
+        return render_template('post_delete_fail.html')
+
+    return render_template('post_delete.html', post=post)
+
+@app.route('/posts/<post_id>/delete', methods=['POST'])
+def post_posts_post_id_delete(post_id):
+    if 'username' not in session:
+        return redirect(url_for('get_login'))
+
+    post = get_post_by_post_id(post_id)
+    if not post:
+        return redirect(url_for('get_posts'))
+
+    if post[3] != session['username']:
+        return render_template('post_delete_fail.html')
+
+    delete_post(post_id)
+    return redirect(url_for('get_posts'))
+
 if __name__ == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=8080)
